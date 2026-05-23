@@ -64,6 +64,8 @@ class MainWin(subsync.gui.layout.mainwin.MainWin):
         if config.assetupd == None:
             self.m_menu.Remove(self.m_menuItemCheckUpdate.GetId())
 
+        self._buildMenuBar()
+
         if task:
             self.m_panelSub.setStream(task.sub)
             self.m_panelRef.setStream(task.ref)
@@ -82,6 +84,42 @@ class MainWin(subsync.gui.layout.mainwin.MainWin):
         listUpdater = assetManager().getAssetListUpdater(autoUpdate=settings().autoUpdate)
         if not listUpdater.isUpdated() and not listUpdater.isRunning():
             listUpdater.run()
+
+    def _buildMenuBar(self):
+        menuBar = wx.MenuBar()
+
+        fileMenu = wx.Menu()
+        miBatch = fileMenu.Append(wx.ID_ANY, _(u"Batch processing\tCtrl+B"))
+        self.Bind(wx.EVT_MENU, self.onMenuItemBatchProcessingClick, miBatch)
+        fileMenu.AppendSeparator()
+        miClose = fileMenu.Append(wx.ID_CLOSE, _(u"Close Window\tCtrl+W"))
+        self.Bind(wx.EVT_MENU, lambda e: self.Close(), miClose)
+        miQuit = fileMenu.Append(wx.ID_EXIT, _(u"Quit\tCtrl+Q"))
+        self.Bind(wx.EVT_MENU, lambda e: self.Close(force=True), miQuit)
+        menuBar.Append(fileMenu, _(u"&File"))
+
+        editMenu = wx.Menu()
+        editMenu.Append(wx.ID_UNDO, _(u"Undo\tCtrl+Z"))
+        editMenu.Append(wx.ID_REDO, _(u"Redo\tShift+Ctrl+Z"))
+        editMenu.AppendSeparator()
+        editMenu.Append(wx.ID_CUT, _(u"Cut\tCtrl+X"))
+        editMenu.Append(wx.ID_COPY, _(u"Copy\tCtrl+C"))
+        editMenu.Append(wx.ID_PASTE, _(u"Paste\tCtrl+V"))
+        editMenu.Append(wx.ID_SELECTALL, _(u"Select All\tCtrl+A"))
+        editMenu.AppendSeparator()
+        miPrefs = editMenu.Append(wx.ID_PREFERENCES, _(u"Preferences...\tCtrl+,"))
+        self.Bind(wx.EVT_MENU, self.onMenuItemSettingsClick, miPrefs)
+        menuBar.Append(editMenu, _(u"&Edit"))
+
+        helpMenu = wx.Menu()
+        if config.assetupd != None:
+            miUpdate = helpMenu.Append(wx.ID_ANY, _(u"Check for updates"))
+            self.Bind(wx.EVT_MENU, self.onMenuItemCheckUpdateClick, miUpdate)
+        miAbout = helpMenu.Append(wx.ID_ABOUT, _(u"About subsync"))
+        self.Bind(wx.EVT_MENU, self.onMenuItemAboutClick, miAbout)
+        menuBar.Append(helpMenu, _(u"&Help"))
+
+        self.SetMenuBar(menuBar)
 
     def onSliderMaxDistScroll(self, event):
         val = self.m_sliderMaxDist.GetValue()
