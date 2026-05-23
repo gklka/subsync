@@ -132,7 +132,10 @@ class build_ext(setuptools.command.build_ext.build_ext):
         self.cflags += [ '-O3', '-g' ]
 
         if sys.platform == 'darwin':
-            self.cflags += ['-stdlib=libc++', '-mmacosx-version-min=10.7']
+            import platform
+            macos_min = '11.0' if platform.machine() == 'arm64' else '10.13'
+            self.cflags += ['-stdlib=libc++', '-mmacosx-version-min=' + macos_min]
+            self.ldflags += ['-mmacosx-version-min=' + macos_min]
 
         if self.has_flag('-std=c++14'):
             self.cflags += ['-std=c++14']
