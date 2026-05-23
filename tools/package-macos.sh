@@ -8,8 +8,8 @@ DIST="$BASE/dist"
 RESOURCES="$BASE/resources"
 VERSION=$(python -c "import subsync; print(subsync.version()[0] or '0.0.0')")
 APP="subsync.app"
-TARGET="$DIST/subsync-${VERSION}-mac-x86_64.dmg"
-UPGRADE="$DIST/subsync-${VERSION}-mac-x86_64.zip"
+TARGET="$DIST/subsync-${VERSION}-mac-arm64.dmg"
+UPGRADE="$DIST/subsync-${VERSION}-mac-arm64.zip"
 
 PATH="$PATH:$(dirname $0)"
 
@@ -33,7 +33,7 @@ create-dmg \
 
 
 mkpackage "$UPGRADE" \
-	--id="subsync/mac-x86_64" \
+	--id="subsync/mac-arm64" \
 	--version="$VERSION" \
 	--install="install.sh" \
 	--stdin="install.sh" \
